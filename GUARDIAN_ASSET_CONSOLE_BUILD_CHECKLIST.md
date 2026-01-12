@@ -206,7 +206,8 @@ src/
 
 ### Ask Claude
 
-> Phase 8: implement the Admin-only resolve workflow with required reason, audit emission, and 403 handling for non-admin. Use RBAC helper can().
+>
+
 
 ---
 
