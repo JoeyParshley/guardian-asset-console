@@ -90,7 +90,7 @@ export default function AssetConsolePage() {
           onAssetSelect={handleAssetSelect}
         />
       }
-      detail={<AssetDetailPanel />}
+      detail={<AssetDetailPanel assetId={selectedAssetId} />}
     />
   );
 }
