@@ -9,13 +9,19 @@ async function enableMocking() {
     return;
   }
 
-  const { worker } = await import('./api/browser');
+  try {
+    const { worker } = await import('./api/browser');
 
-  // Start the worker with onUnhandledRequest set to bypass
-  // so non-API requests (assets, etc.) pass through
-  return worker.start({
-    onUnhandledRequest: 'bypass',
-  });
+    // Start the worker with onUnhandledRequest set to bypass
+    // so non-API requests (assets, etc.) pass through
+    await worker.start({
+      onUnhandledRequest: 'bypass',
+    });
+    console.log('MSW: Mock Service Worker started successfully');
+  } catch (error) {
+    console.error('MSW: Failed to start Mock Service Worker', error);
+    console.warn('MSW: API requests may fail. Make sure mockServiceWorker.js exists in the public folder.');
+  }
 }
 
 enableMocking().then(() => {

@@ -64,7 +64,38 @@ async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
     },
   });
 
-  const data = await response.json();
+  // Check if response is JSON before parsing
+  const contentType = response.headers.get('content-type');
+  const isJson = contentType?.includes('application/json');
+
+  let data: unknown;
+
+  if (!isJson) {
+    // If we get HTML, it likely means MSW isn't intercepting the request
+    const text = await response.text();
+    if (text.trim().startsWith('<!')) {
+      throw new Error(
+        'Received HTML instead of JSON. This usually means the API mock service (MSW) is not running. Please refresh the page or check the browser console for MSW initialization errors.'
+      );
+    }
+    throw new Error(`Expected JSON response but got ${contentType || 'unknown content type'}`);
+  }
+
+  // Try to parse as JSON, but handle cases where content-type is wrong
+  try {
+    const text = await response.text();
+    if (text.trim().startsWith('<!')) {
+      throw new Error(
+        'Received HTML instead of JSON. This usually means the API mock service (MSW) is not running. Please refresh the page or check the browser console for MSW initialization errors.'
+      );
+    }
+    data = JSON.parse(text);
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('HTML instead of JSON')) {
+      throw error;
+    }
+    throw new Error(`Failed to parse JSON response: ${(error as Error).message}`);
+  }
 
   if (!response.ok) {
     if (isApiError(data)) {
