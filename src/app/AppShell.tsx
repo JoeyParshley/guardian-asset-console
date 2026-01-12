@@ -41,7 +41,7 @@ export function AppShell({ children }: AppShellProps) {
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
             {/* App Bar with role selector and theme toggle */}
             <AppBar position="static">
                 <Toolbar>
@@ -85,7 +85,7 @@ export function AppShell({ children }: AppShellProps) {
             </AppBar>
 
             {/* Main content container */}
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column', overflow: 'hidden', width: '100%' }}>
                 {children}
             </Box>
         </Box>
