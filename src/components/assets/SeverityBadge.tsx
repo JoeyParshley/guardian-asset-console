@@ -1,4 +1,3 @@
-import React from 'react';
 import { Chip } from '@mui/material';
 import type { Severity } from '../../domain/types';
 import { getSeverityColor, getSeverityBgColor, getSeverityLabel } from '../../utils/severity';

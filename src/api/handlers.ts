@@ -42,10 +42,14 @@ const getAssetsHandler = http.get('/api/assets', ({ request }) => {
     assets = assets.filter((a) => a.site === site);
   }
   if (status) {
-    assets = assets.filter((a) => a.status === status);
+    // Support comma-separated values for multi-select
+    const statuses = status.split(',');
+    assets = assets.filter((a) => statuses.includes(a.status));
   }
   if (severity) {
-    assets = assets.filter((a) => a.severity === severity);
+    // Support comma-separated values for multi-select
+    const severities = severity.split(',');
+    assets = assets.filter((a) => severities.includes(a.severity));
   }
   if (search) {
     const term = search.toLowerCase();

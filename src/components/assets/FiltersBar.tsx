@@ -123,12 +123,14 @@ export function FiltersBar({
         value={searchInput}
         onChange={handleSearchChange}
         sx={{ minWidth: 200, flex: '1 1 200px', maxWidth: 300 }}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon fontSize="small" color="action" />
-            </InputAdornment>
-          ),
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon fontSize="small" color="action" />
+              </InputAdornment>
+            ),
+          },
         }}
       />
 

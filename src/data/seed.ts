@@ -211,7 +211,7 @@ export function generateSeedData(options: SeedOptions = {}): SeedData {
       rng() < opts.incidentProbability
     ) {
       const incidentDaysBack = randomInt(rng, 0, 14);
-      const isResolved = status === 'resolved' || rng() < 0.2;
+      const isResolved = rng() < 0.2;
 
       const incident: Incident = {
         id: generateId(rng, 'incident'),

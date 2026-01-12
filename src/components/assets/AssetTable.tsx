@@ -1,39 +1,74 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { DataGrid, type GridColDef, type GridRowParams } from '@mui/x-data-grid';
-import { Box, CircularProgress, Alert } from '@mui/material';
+import { Box, CircularProgress, Alert, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useSessionStore } from '../../store/useSessionStore';
-import { listAssets, setClientConfig } from '../../api/client';
-import type { Asset, Severity } from '../../domain/types';
+import { listAssets, setClientConfig, type ListAssetsParams } from '../../api/client';
+import type { Asset, AssetStatus, Severity } from '../../domain/types';
 import { SeverityBadge } from './SeverityBadge';
 import { formatRelative } from '../../utils/time';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
+
+export interface AssetTableFilters {
+  search: string;
+  status: AssetStatus[];
+  severity: Severity[];
+  site: string;
+}
+
+export interface AssetTableProps {
+  filters: AssetTableFilters;
+  onAssetsLoaded?: (assets: Asset[]) => void;
+  selectedAssetId?: string | null;
+  onAssetSelect?: (assetId: string | null) => void;
+}
 
 /**
  * AssetTable component displays assets in a DataGrid with React Query data fetching
- * Includes role-based API calls and selection behavior
+ * Includes role-based API calls, filtering, and selection behavior
  */
-export function AssetTable() {
+export function AssetTable({
+  filters,
+  onAssetsLoaded,
+  selectedAssetId,
+  onAssetSelect,
+}: AssetTableProps) {
   const role = useSessionStore((state) => state.role);
-  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
 
   // Sync API client with current role
   useEffect(() => {
     setClientConfig({ role });
   }, [role]);
 
+  // Build query params from filters
+  const queryParams: ListAssetsParams = {};
+  if (filters.search) queryParams.search = filters.search;
+  if (filters.status.length > 0) queryParams.status = filters.status.join(',');
+  if (filters.severity.length > 0) queryParams.severity = filters.severity.join(',');
+  if (filters.site) queryParams.site = filters.site;
+
   // Fetch assets with React Query
   const { data: assets, isLoading, error, isSuccess } = useQuery({
-    queryKey: ['assets', role], // Include role in key (different roles might see different data)
-    queryFn: () => listAssets(),
+    queryKey: ['assets', role, filters], // Include filters in key for cache isolation
+    queryFn: () => listAssets(queryParams),
   });
 
   // Ensure assets is always an array
   const safeAssets = Array.isArray(assets) ? assets : [];
 
+  // Notify parent of loaded assets (for deriving sites list)
+  useEffect(() => {
+    if (isSuccess && onAssetsLoaded) {
+      onAssetsLoaded(safeAssets);
+    }
+  }, [isSuccess, safeAssets, onAssetsLoaded]);
+
   // Handle row click for selection (single select for master/detail pattern)
   const handleRowClick = (params: GridRowParams<Asset>) => {
-    setSelectedAssetId(params.id as string);
-    // TODO: In Phase 7, lift this state to parent and pass to AssetDetailPanel
+    const newId = params.id as string;
+    if (onAssetSelect) {
+      onAssetSelect(newId === selectedAssetId ? null : newId);
+    }
   };
 
   // Define columns
@@ -91,6 +126,10 @@ export function AssetTable() {
     },
   ];
 
+  // Check if any filters are active
+  const hasActiveFilters =
+    filters.search || filters.status.length > 0 || filters.severity.length > 0 || filters.site;
+
   // Loading state
   if (isLoading) {
     return (
@@ -111,11 +150,30 @@ export function AssetTable() {
     );
   }
 
-  // Empty state
+  // Empty state - different message based on whether filters are active
   if (isSuccess && safeAssets.length === 0) {
     return (
-      <Box sx={{ p: 2, textAlign: 'center', minHeight: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Alert severity="info">No assets found</Alert>
+      <Box
+        sx={{
+          p: 4,
+          textAlign: 'center',
+          minHeight: 400,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'text.secondary',
+        }}
+      >
+        <SearchOffIcon sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
+        <Typography variant="h6" gutterBottom>
+          {hasActiveFilters ? 'No assets match your filters' : 'No assets found'}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {hasActiveFilters
+            ? 'Try adjusting your search or filter criteria'
+            : 'Assets will appear here once they are added to the system'}
+        </Typography>
       </Box>
     );
   }
@@ -132,7 +190,8 @@ export function AssetTable() {
         columns={columns}
         getRowId={(row) => row.id}
         onRowClick={handleRowClick}
-        pagination={false}
+        rowSelectionModel={selectedAssetId ? { type: 'include' as const, ids: new Set([selectedAssetId]) } : { type: 'include' as const, ids: new Set<string>() }}
+        pageSizeOptions={[100]}
         hideFooter
         autoHeight
         disableColumnFilter
