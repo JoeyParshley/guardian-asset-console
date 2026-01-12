@@ -94,12 +94,12 @@ src/
 
 ### Files to create
 
-- [ ] `src/domain/types.ts`
-- [ ] `src/domain/permissions.ts`
-- [ ] `src/data/seed.ts`
-- [ ] `src/utils/time.ts`
-- [ ] `src/utils/severity.ts`
-- [ ] `src/utils/filterSort.ts`
+- [x] `src/domain/types.ts`
+- [x] `src/domain/permissions.ts`
+- [x] `src/data/seed.ts`
+- [x] `src/utils/time.ts`
+- [x] `src/utils/severity.ts`
+- [x] `src/utils/filterSort.ts`
 
 ### Ask Claude
 
@@ -111,19 +111,19 @@ src/
 
 ### Endpoints
 
-- [ ] `GET /api/assets`
-- [ ] `GET /api/assets/:id`
-- [ ] `POST /api/scans`
-- [ ] `POST /api/incidents/:assetId/resolve`
-- [ ] `GET /api/audit`
+- [x] `GET /api/assets`
+- [x] `GET /api/assets/:id`
+- [x] `POST /api/scans`
+- [x] `POST /api/incidents/:assetId/resolve`
+- [x] `GET /api/audit`
 
 ### Files
 
-- [ ] `src/api/db.ts`
-- [ ] `src/api/handlers.ts`
-- [ ] `src/api/browser.ts`
-- [ ] `src/api/server.ts`
-- [ ] `src/api/client.ts`
+- [x] `src/api/db.ts`
+- [x] `src/api/handlers.ts`
+- [x] `src/api/browser.ts`
+- [x] `src/api/server.ts`
+- [x] `src/api/client.ts`
 
 ### Ask Claude
 
@@ -135,9 +135,9 @@ src/
 
 ### Files
 
-- [ ] `src/app/theme.ts`
-- [ ] `src/app/AppShell.tsx`
-- [ ] `src/store/useSessionStore.ts`
+- [x] `src/app/theme.ts`
+- [x] `src/app/AppShell.tsx`
+- [x] `src/store/useSessionStore.ts`
 
 ### Ask Claude
 
@@ -149,11 +149,11 @@ src/
 
 ### Files
 
-- [ ] `src/pages/AssetConsolePage.tsx`
-- [ ] `src/components/layout/MainLayout.tsx`
-- [ ] `src/components/assets/FiltersBar.tsx`
-- [ ] `src/components/assets/AssetTable.tsx`
-- [ ] `src/components/assets/AssetDetailPanel.tsx`
+- [x] `src/pages/AssetConsolePage.tsx`
+- [x] `src/components/layout/MainLayout.tsx`
+- [x] `src/components/assets/FiltersBar.tsx`
+- [x] `src/components/assets/AssetTable.tsx`
+- [x] `src/components/assets/AssetDetailPanel.tsx`
 
 ### Ask Claude
 
