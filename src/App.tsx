@@ -6,6 +6,7 @@ import { getTheme } from './app/theme';
 import { AppShell, type PageId } from './app/AppShell';
 import AssetConsolePage from './pages/AssetConsolePage';
 import AuditLogPage from './pages/AuditLogPage';
+import ScanSimulatorPage from './pages/ScanSimulatorPage';
 
 /**
  * React Query client configuration
@@ -51,6 +52,8 @@ function App() {
         return <AssetConsolePage />;
       case 'audit':
         return <AuditLogPage />;
+      case 'simulator':
+        return <ScanSimulatorPage />;
       default:
         return <AssetConsolePage />;
     }

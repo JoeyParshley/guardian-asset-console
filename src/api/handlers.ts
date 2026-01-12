@@ -199,6 +199,39 @@ const getAuditLogsHandler = http.get('/api/audit', ({ request }) => {
   return HttpResponse.json(logs);
 });
 
+// POST /api/incidents - Create a new incident (for simulator anomaly injection)
+const createIncidentHandler = http.post('/api/incidents', async ({ request }) => {
+  const role = getRoleFromRequest(request);
+
+  // Only operators and admins can create incidents (same as create_scan)
+  if (!can(role, 'create_scan')) {
+    return HttpResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  const body = await request.json() as {
+    assetId: string;
+    severity: 'critical' | 'high' | 'medium' | 'low' | 'info';
+    description: string;
+  };
+
+  if (!body.assetId || !body.severity || !body.description) {
+    return HttpResponse.json(
+      { error: 'Missing required fields: assetId, severity, description' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const incident = db.createIncident(body.assetId, body.severity, body.description);
+    return HttpResponse.json(incident, { status: 201 });
+  } catch (error) {
+    return HttpResponse.json(
+      { error: (error as Error).message },
+      { status: 404 }
+    );
+  }
+});
+
 // Export all handlers as an array for MSW
 export const handlers = [
   getAssetsHandler,
@@ -206,4 +239,5 @@ export const handlers = [
   createScanHandler,
   resolveIncidentHandler,
   getAuditLogsHandler,
+  createIncidentHandler,
 ];

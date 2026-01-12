@@ -141,6 +141,22 @@ export async function createScan(input: CreateScanInput): Promise<Scan> {
 // Incident API
 // ============================================================
 
+export interface CreateIncidentInput {
+  assetId: string;
+  severity: 'critical' | 'high' | 'medium' | 'low' | 'info';
+  description: string;
+}
+
+/**
+ * Create a new incident (for simulator anomaly injection)
+ */
+export async function createIncident(input: CreateIncidentInput): Promise<Incident> {
+  return apiFetch<Incident>('/api/incidents', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
 export interface ResolveIncidentInput {
   reason: string;
 }

@@ -17,10 +17,11 @@ import {
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import HistoryIcon from '@mui/icons-material/History';
+import RadarIcon from '@mui/icons-material/Radar';
 import { useSessionStore } from '../store/useSessionStore';
 import type { Role } from '../domain/types';
 
-export type PageId = 'assets' | 'audit';
+export type PageId = 'assets' | 'audit' | 'simulator';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -89,6 +90,12 @@ export function AppShell({ children, currentPage, onPageChange }: AppShellProps)
               value="audit"
               label="Audit Log"
               icon={<HistoryIcon />}
+              iconPosition="start"
+            />
+            <Tab
+              value="simulator"
+              label="Simulator"
+              icon={<RadarIcon />}
               iconPosition="start"
             />
           </Tabs>

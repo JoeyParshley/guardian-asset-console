@@ -150,6 +150,36 @@ class Database {
     }
 
     /**
+     * Create a new incident for an asset (for simulator anomaly injection)
+     */
+    createIncident(
+        assetId: string,
+        severity: 'critical' | 'high' | 'medium' | 'low' | 'info',
+        description: string
+    ): Incident {
+        const asset = this.getAssetById(assetId);
+        if (!asset) {
+            throw new Error(`Asset not found: ${assetId}`);
+        }
+
+        const incident: Incident = {
+            id: `incident-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+            assetId,
+            severity,
+            description,
+            createdAt: new Date().toISOString(),
+        };
+
+        this.incidents.push(incident);
+
+        // Update asset status to anomaly
+        asset.status = 'anomaly';
+        asset.severity = severity;
+
+        return incident;
+    }
+
+    /**
      * Create a new audit log entry
      * Useful for logging other actions besides incident resolution
      */
